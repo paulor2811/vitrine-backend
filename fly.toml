@@ -5,6 +5,7 @@ primary_region = 'gru'
 
 [deploy]
   release_command = 'php artisan migrate --force'
+  release_command_timeout = 300
 
 [env]
   APP_ENV  = 'production'
