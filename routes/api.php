@@ -37,16 +37,21 @@ Route::post('events', [AnalyticsController::class, 'store'])
 
 // Rotas autenticadas via cookie + Passport
 Route::middleware('auth.cookie')->group(function () {
+    // Sempre acessíveis — permitem detectar e resolver o estado sem senha
     Route::prefix('auth')->group(function () {
-        Route::post('logout',        [AuthController::class, 'logout'])->name('auth.logout');
-        Route::get('me',             [AuthController::class, 'me'])->name('auth.me');
-        Route::post('password',      [AuthController::class, 'setPassword'])->name('auth.set-password');
-        Route::post('claim-session', [AuthController::class, 'claimSession'])->name('auth.claim-session');
+        Route::get('me',        [AuthController::class, 'me'])->name('auth.me');
+        Route::post('logout',   [AuthController::class, 'logout'])->name('auth.logout');
+        Route::post('password', [AuthController::class, 'setPassword'])->name('auth.set-password');
     });
 
-    Route::prefix('favorites')->group(function () {
-        Route::get('/',              [FavoriteController::class, 'index'])->name('favorites.index');
-        Route::post('/',             [FavoriteController::class, 'store'])->name('favorites.store');
-        Route::delete('{productId}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+    // Exigem senha definida
+    Route::middleware('require.password')->group(function () {
+        Route::post('auth/claim-session', [AuthController::class, 'claimSession'])->name('auth.claim-session');
+
+        Route::prefix('favorites')->group(function () {
+            Route::get('/',              [FavoriteController::class, 'index'])->name('favorites.index');
+            Route::post('/',             [FavoriteController::class, 'store'])->name('favorites.store');
+            Route::delete('{productId}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+        });
     });
 });
