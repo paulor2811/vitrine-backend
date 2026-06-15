@@ -3,6 +3,9 @@ primary_region = 'gru'
 
 [build]
 
+[deploy]
+  release_command = 'php artisan migrate --force'
+
 [env]
   APP_ENV  = 'production'
   APP_DEBUG = 'false'
