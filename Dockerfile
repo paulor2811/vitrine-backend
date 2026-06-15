@@ -55,7 +55,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY docker/release.sh /var/www/html/docker/release.sh
+RUN chmod +x /entrypoint.sh /var/www/html/docker/release.sh
 
 EXPOSE 8080
 

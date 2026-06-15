@@ -4,7 +4,7 @@ primary_region = 'gru'
 [build]
 
 [deploy]
-  release_command = 'php artisan migrate --force && php artisan db:seed --class=NicheSeeder --force && php artisan db:seed --class=StoreSeeder --force'
+  release_command = '/bin/sh /var/www/html/docker/release.sh'
 
 [env]
   APP_ENV        = 'production'
