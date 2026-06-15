@@ -37,4 +37,19 @@ class ProductController extends Controller
             'message' => 'OK',
         ]);
     }
+
+    public function show(string $nicheSlug, string $productId): JsonResponse
+    {
+        try {
+            $product = $this->productService->findById($nicheSlug, $productId);
+        } catch (NotFoundHttpException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $product,
+            'message' => 'OK',
+        ]);
+    }
 }
