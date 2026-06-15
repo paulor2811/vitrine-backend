@@ -4,47 +4,39 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+// Passport 13: personal access client is identified by grant_types JSON containing 'personal_access'
 return new class extends Migration
 {
     public function up(): void
     {
         $exists = DB::table('oauth_clients')
-            ->where('personal_access_client', true)
             ->where('revoked', false)
+            ->whereRaw("grant_types::jsonb @> '\"personal_access\"'::jsonb")
             ->exists();
 
         if ($exists) {
             return;
         }
 
-        $clientId = (string) Str::uuid();
-
         DB::table('oauth_clients')->insert([
-            'id'                     => $clientId,
-            'user_id'                => null,
-            'name'                   => 'Personal Access Client',
-            'secret'                 => null,
-            'provider'               => 'users',
-            'redirect'               => 'http://localhost',
-            'personal_access_client' => true,
-            'password_client'        => false,
-            'revoked'                => false,
-            'created_at'             => now(),
-            'updated_at'             => now(),
-        ]);
-
-        DB::table('oauth_personal_access_clients')->insert([
-            'client_id'  => $clientId,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'id'            => (string) Str::uuid(),
+            'owner_id'      => null,
+            'owner_type'    => null,
+            'name'          => 'Personal Access Client',
+            'secret'        => null,
+            'provider'      => null,
+            'redirect_uris' => json_encode([]),
+            'grant_types'   => json_encode(['personal_access']),
+            'revoked'       => false,
+            'created_at'    => now(),
+            'updated_at'    => now(),
         ]);
     }
 
     public function down(): void
     {
         DB::table('oauth_clients')
-            ->where('personal_access_client', true)
-            ->where('name', 'Personal Access Client')
+            ->whereRaw("grant_types::jsonb @> '\"personal_access\"'::jsonb")
             ->delete();
     }
 };
