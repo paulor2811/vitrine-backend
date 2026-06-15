@@ -63,14 +63,25 @@ class AuthService
                 httpOnly: true,
                 sameSite: 'Lax',
             ),
+            // Cookie legível pelo JS: indica que há sessão ativa (não contém dados sensíveis)
+            cookie(
+                name:     'vitrine_session',
+                value:    '1',
+                minutes:  self::ACCESS_TOKEN_MINUTES,
+                path:     '/',
+                secure:   $isSecure,
+                httpOnly: false,
+                sameSite: 'Lax',
+            ),
         ];
     }
 
     public function clearCookies(): array
     {
         return [
-            cookie(name: self::COOKIE_ACCESS,  value: '', minutes: -1, path: '/'),
-            cookie(name: self::COOKIE_REFRESH, value: '', minutes: -1, path: '/'),
+            cookie(name: self::COOKIE_ACCESS,   value: '', minutes: -1, path: '/'),
+            cookie(name: self::COOKIE_REFRESH,  value: '', minutes: -1, path: '/'),
+            cookie(name: 'vitrine_session',     value: '', minutes: -1, path: '/'),
         ];
     }
 
