@@ -75,11 +75,15 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('price')
                     ->label('Preço atual (R$)')
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(99999999.99)
                     ->prefix('R$'),
 
                 Forms\Components\TextInput::make('original_price')
                     ->label('Preço original (R$)')
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(99999999.99)
                     ->prefix('R$'),
 
                 Forms\Components\TextInput::make('rating')
