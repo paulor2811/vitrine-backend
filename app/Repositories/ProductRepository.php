@@ -27,8 +27,16 @@ class ProductRepository
             ->get();
     }
 
+    public function findByNicheAndId(string $nicheId, string $id): ?Product
+    {
+        return Product::with('store', 'niche', 'media')
+            ->where('niche_id', $nicheId)
+            ->where('active', true)
+            ->find($id);
+    }
+
     public function findById(string $id): ?Product
     {
-        return Product::with('store', 'niche')->find($id);
+        return Product::with('store', 'niche', 'media')->find($id);
     }
 }

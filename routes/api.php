@@ -27,7 +27,8 @@ Route::get('products/featured', [ProductController::class, 'featured'])->name('p
 Route::prefix('niches')->group(function () {
     Route::get('/',              [NicheController::class,   'index'])->name('niches.index');
     Route::get('{slug}',         [NicheController::class,   'show'])->name('niches.show');
-    Route::get('{slug}/products',[ProductController::class, 'byNiche'])->name('niches.products');
+    Route::get('{slug}/products',             [ProductController::class, 'byNiche'])->name('niches.products');
+    Route::get('{nicheSlug}/products/{productId}', [ProductController::class, 'show'])->name('niches.products.show');
 });
 
 // Analytics — público (anônimo ou autenticado)
