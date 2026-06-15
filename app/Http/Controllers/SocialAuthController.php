@@ -28,7 +28,7 @@ class SocialAuthController extends Controller
         $user       = $this->userService->findOrCreateFromGoogle($socialUser);
         $tokens     = $this->authService->issueTokens($user);
 
-        [$accessCookie, $refreshCookie] = $this->authService->buildCookies(
+        [$accessCookie, $refreshCookie, $sessionCookie] = $this->authService->buildCookies(
             $tokens['access_token'],
             $tokens['refresh_token'],
         );
@@ -37,6 +37,7 @@ class SocialAuthController extends Controller
 
         return redirect("{$frontendUrl}?token_issued=1")
             ->withCookie($accessCookie)
-            ->withCookie($refreshCookie);
+            ->withCookie($refreshCookie)
+            ->withCookie($sessionCookie);
     }
 }
