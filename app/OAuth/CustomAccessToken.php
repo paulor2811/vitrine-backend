@@ -68,11 +68,11 @@ class CustomAccessToken implements AccessTokenEntityInterface
         return array_values($this->scopes);
     }
 
-    public function convertToJWT(CryptKey $privateKey): \Lcobucci\JWT\Token\Plain
+    public function convertToJWT(): \Lcobucci\JWT\Token\Plain
     {
         $config = Configuration::forAsymmetricSigner(
             new Sha256(),
-            InMemory::plainText($privateKey->getKeyContents(), $privateKey->getPassPhrase() ?? ''),
+            InMemory::plainText($this->privateKey->getKeyContents(), $this->privateKey->getPassPhrase() ?? ''),
             InMemory::plainText('empty', 'empty'),
         );
 
