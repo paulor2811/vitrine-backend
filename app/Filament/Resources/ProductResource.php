@@ -58,12 +58,16 @@ class ProductResource extends Resource
             ])->columns(2),
 
             Forms\Components\Section::make('Imagem')->schema([
-                Forms\Components\TextInput::make('image_path')
-                    ->label('URL da imagem')
-                    ->placeholder('https://...')
-                    ->url()
-                    ->maxLength(2048)
-                    ->helperText('Cole o link da imagem do produto (Amazon, Shopee, etc.) ou deixe vazio.')
+                Forms\Components\FileUpload::make('image_path')
+                    ->label('Imagem do produto')
+                    ->image()
+                    ->disk('r2')
+                    ->visibility('public')
+                    ->directory('products')
+                    ->imageEditor()
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(5120)
+                    ->helperText('JPEG, PNG ou WebP — máx. 5 MB.')
                     ->columnSpanFull(),
             ]),
 
@@ -119,6 +123,7 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('')
+                    ->disk('r2')
                     ->square()
                     ->size(48),
                 Tables\Columns\TextColumn::make('name')
