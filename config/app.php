@@ -7,8 +7,6 @@ return [
     'url'          => env('APP_URL', 'http://localhost'),
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
     'cookie_domain'  => env('COOKIE_DOMAIN', null),
-    'admin_email'    => env('ADMIN_EMAIL', 'admin@vitrine.local'),
-    'admin_password' => env('ADMIN_PASSWORD', 'changeme'),
     'timezone'     => env('APP_TIMEZONE', 'America/Sao_Paulo'),
     'locale'       => env('APP_LOCALE', 'pt_BR'),
     'key'          => env('APP_KEY'),
