@@ -3,10 +3,7 @@
 namespace App\OAuth;
 
 use DateTimeImmutable;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -68,25 +65,24 @@ class CustomAccessToken implements AccessTokenEntityInterface
         return array_values($this->scopes);
     }
 
-    public function convertToJWT(): \Lcobucci\JWT\Token\Plain
+    // Sobrescreve toString() (public no trait) para injetar is_admin no JWT.
+    // convertToJWT() é private no trait e não pode ser sobrescrito.
+    public function toString(): string
     {
-        $config = Configuration::forAsymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($this->privateKey->getKeyContents(), $this->privateKey->getPassPhrase() ?? ''),
-            InMemory::plainText('empty', 'empty'),
-        );
+        $this->initJwtConfiguration();
 
-        $now = new DateTimeImmutable();
+        $subject = $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
 
-        return $config->builder()
+        return $this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
-            ->issuedAt($now)
-            ->canOnlyBeUsedAfter($now)
+            ->issuedAt(new DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo((string) $this->getUserIdentifier())
+            ->relatedTo($subject)
             ->withClaim('scopes', $this->getScopes())
             ->withClaim('is_admin', $this->isAdmin)
-            ->getToken($config->signer(), $config->signingKey());
+            ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey())
+            ->toString();
     }
 }
