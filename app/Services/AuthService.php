@@ -43,6 +43,7 @@ class AuthService
     public function buildCookies(string $accessToken, string $refreshToken): array
     {
         $isSecure = app()->isProduction();
+        $domain   = config('app.cookie_domain');
 
         return [
             cookie(
@@ -50,6 +51,7 @@ class AuthService
                 value:    $accessToken,
                 minutes:  self::ACCESS_TOKEN_MINUTES,
                 path:     '/',
+                domain:   $domain,
                 secure:   $isSecure,
                 httpOnly: true,
                 sameSite: 'Lax',
@@ -59,6 +61,7 @@ class AuthService
                 value:    $refreshToken,
                 minutes:  self::REFRESH_TOKEN_DAYS * 60 * 24,
                 path:     '/',
+                domain:   $domain,
                 secure:   $isSecure,
                 httpOnly: true,
                 sameSite: 'Lax',
@@ -69,6 +72,7 @@ class AuthService
                 value:    '1',
                 minutes:  self::ACCESS_TOKEN_MINUTES,
                 path:     '/',
+                domain:   $domain,
                 secure:   $isSecure,
                 httpOnly: false,
                 sameSite: 'Lax',
@@ -78,10 +82,12 @@ class AuthService
 
     public function clearCookies(): array
     {
+        $domain = config('app.cookie_domain');
+
         return [
-            cookie(name: self::COOKIE_ACCESS,   value: '', minutes: -1, path: '/'),
-            cookie(name: self::COOKIE_REFRESH,  value: '', minutes: -1, path: '/'),
-            cookie(name: 'vitrine_session',     value: '', minutes: -1, path: '/'),
+            cookie(name: self::COOKIE_ACCESS,  value: '', minutes: -1, path: '/', domain: $domain),
+            cookie(name: self::COOKIE_REFRESH, value: '', minutes: -1, path: '/', domain: $domain),
+            cookie(name: 'vitrine_session',    value: '', minutes: -1, path: '/', domain: $domain),
         ];
     }
 
