@@ -19,7 +19,7 @@ class CustomAccessToken implements AccessTokenEntityInterface
     private ClientEntityInterface $client;
     private array $scopes = [];
     private DateTimeImmutable $expiryDateTime;
-    private int|string|null $userIdentifier = null;
+    private ?string $userIdentifier = null;
     private bool $isAdmin = false;
 
     public function setIsAdmin(bool $isAdmin): void
@@ -49,14 +49,14 @@ class CustomAccessToken implements AccessTokenEntityInterface
         $this->expiryDateTime = $dateTime;
     }
 
-    public function getUserIdentifier(): int|string|null
+    public function getUserIdentifier(): ?string
     {
         return $this->userIdentifier;
     }
 
     public function setUserIdentifier(int|string $identifier): void
     {
-        $this->userIdentifier = $identifier;
+        $this->userIdentifier = (string) $identifier;
     }
 
     public function addScope(ScopeEntityInterface $scope): void
