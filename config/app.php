@@ -6,6 +6,7 @@ return [
     'debug'        => (bool) env('APP_DEBUG', false),
     'url'          => env('APP_URL', 'http://localhost'),
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    'cookie_domain' => env('COOKIE_DOMAIN', null),
     'timezone'     => env('APP_TIMEZONE', 'America/Sao_Paulo'),
     'locale'       => env('APP_LOCALE', 'pt_BR'),
     'key'          => env('APP_KEY'),
