@@ -17,50 +17,34 @@ class UserService
         private readonly AnalyticsService $analyticsService,
     ) {}
 
-    public function register(RegisterUserDTO $dto): array
+    public function register(RegisterUserDTO $dto): User
     {
-        $user = $this->userRepository->create([
+        return $this->userRepository->create([
             'name'     => $dto->name,
             'email'    => $dto->email,
             'password' => $dto->password,
         ]);
-
-        $token = $user->createToken('api')->accessToken;
-
-        return ['user' => $user, 'token' => $token];
     }
 
-    public function login(LoginUserDTO $dto): array
+    public function login(LoginUserDTO $dto): User
     {
         if (! Auth::attempt(['email' => $dto->email, 'password' => $dto->password])) {
             throw new AuthenticationException('Credenciais inválidas.');
         }
 
         /** @var User $user */
-        $user  = Auth::user();
-        $token = $user->createToken('api')->accessToken;
-
-        return ['user' => $user, 'token' => $token];
+        return Auth::user();
     }
 
-    public function loginWithGoogle(SocialiteUser $socialUser): array
+    public function findOrCreateFromGoogle(SocialiteUser $socialUser): User
     {
-        $user = $this->userRepository->updateOrCreateFromGoogle([
-            'google_id'          => $socialUser->getId(),
-            'name'               => $socialUser->getName(),
-            'email'              => $socialUser->getEmail(),
-            'avatar_url'         => $socialUser->getAvatar(),
-            'email_verified_at'  => now(),
+        return $this->userRepository->updateOrCreateFromGoogle([
+            'google_id'         => $socialUser->getId(),
+            'name'              => $socialUser->getName(),
+            'email'             => $socialUser->getEmail(),
+            'avatar_url'        => $socialUser->getAvatar(),
+            'email_verified_at' => now(),
         ]);
-
-        $token = $user->createToken('api')->accessToken;
-
-        return ['user' => $user, 'token' => $token];
-    }
-
-    public function logout(User $user): void
-    {
-        $user->token()->revoke();
     }
 
     public function claimSession(User $user, string $sessionId): void

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
 use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -11,6 +11,7 @@ class SocialAuthController extends Controller
 {
     public function __construct(
         private readonly UserService $userService,
+        private readonly AuthService $authService,
     ) {}
 
     public function redirect(): RedirectResponse
@@ -21,14 +22,21 @@ class SocialAuthController extends Controller
             ->redirect();
     }
 
-    public function callback(): JsonResponse|RedirectResponse
+    public function callback(): RedirectResponse
     {
         $socialUser = Socialite::driver('google')->stateless()->user();
-        $result     = $this->userService->loginWithGoogle($socialUser);
+        $user       = $this->userService->findOrCreateFromGoogle($socialUser);
+        $tokens     = $this->authService->issueTokens($user);
+
+        [$accessCookie, $refreshCookie] = $this->authService->buildCookies(
+            $tokens['access_token'],
+            $tokens['refresh_token'],
+        );
 
         $frontendUrl = config('app.frontend_url');
-        $token       = urlencode($result['token']);
 
-        return redirect("{$frontendUrl}?token={$token}");
+        return redirect("{$frontendUrl}?token_issued=1")
+            ->withCookie($accessCookie)
+            ->withCookie($refreshCookie);
     }
 }
