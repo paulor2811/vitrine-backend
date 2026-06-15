@@ -9,11 +9,17 @@ class NicheRepository
 {
     public function allActive(): Collection
     {
-        return Niche::where('active', true)->orderBy('name')->get();
+        return Niche::withCount(['products' => fn ($q) => $q->where('active', true)])
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
     }
 
     public function findBySlug(string $slug): ?Niche
     {
-        return Niche::where('slug', $slug)->where('active', true)->first();
+        return Niche::withCount(['products' => fn ($q) => $q->where('active', true)])
+            ->where('slug', $slug)
+            ->where('active', true)
+            ->first();
     }
 }

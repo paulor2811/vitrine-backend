@@ -24,4 +24,9 @@ class ProductService
 
         return $this->productRepository->findByNiche($niche->id);
     }
+
+    public function listFeatured(int $limit = 20): Collection
+    {
+        return $this->productRepository->findFeatured($limit);
+    }
 }

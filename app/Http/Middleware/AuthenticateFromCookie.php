@@ -24,13 +24,30 @@ class AuthenticateFromCookie
             return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
         }
 
-        $userId = $this->resolveUserId($tokenValue);
+        // Decodifica o payload do JWT (sem verificar assinatura — só leitura de claims)
+        $payload = $this->decodeJwtPayload($tokenValue);
 
-        if (! $userId) {
+        if (! $payload) {
             return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
         }
 
-        $user = User::find($userId);
+        $jti     = $payload['jti']      ?? null;
+        $sub     = $payload['sub']      ?? null;
+        $exp     = $payload['exp']      ?? 0;
+        $isAdmin = (bool) ($payload['is_admin'] ?? false);
+
+        if (! $jti || ! $sub || $exp < time()) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+        }
+
+        // Usa cache para evitar consulta ao banco a cada request
+        $tokenHash = hash('sha256', $tokenValue);
+
+        if (! $this->isTokenNotRevoked($tokenHash, $jti, $exp)) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+        }
+
+        $user = User::find($sub);
 
         if (! $user) {
             return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
@@ -38,47 +55,32 @@ class AuthenticateFromCookie
 
         Auth::setUser($user);
 
+        // is_admin vem do JWT assinado — disponível para middlewares subsequentes
+        $request->attributes->set('is_admin', $isAdmin);
+
         return $next($request);
     }
 
-    private function resolveUserId(string $tokenValue): ?string
+    private function isTokenNotRevoked(string $tokenHash, string $jti, int $exp): bool
     {
-        $tokenHash = hash('sha256', $tokenValue);
-
-        $cached = $this->tokenCacheService->get($tokenHash);
-
-        if ($cached !== null) {
-            return $cached;
+        // Cache hit = token já foi validado e não estava revogado
+        if ($this->tokenCacheService->get($tokenHash) !== null) {
+            return true;
         }
 
-        // Cache miss: decodifica o JWT para obter jti e exp sem verificar assinatura
-        $payload = $this->decodeJwtPayload($tokenValue);
-
-        if (! $payload) {
-            return null;
-        }
-
-        $jti = $payload['jti'] ?? null;
-        $sub = $payload['sub'] ?? null;
-        $exp = $payload['exp'] ?? 0;
-
-        if (! $jti || ! $sub || $exp < time()) {
-            return null;
-        }
-
-        // Verifica no banco se não foi revogado
+        // Cache miss: consulta o banco
         $dbToken = DB::table('oauth_access_tokens')
             ->where('id', $jti)
             ->first();
 
         if (! $dbToken || $dbToken->revoked) {
-            return null;
+            return false;
         }
 
         $ttl = $exp - time();
-        $this->tokenCacheService->set($tokenHash, (string) $sub, $ttl);
+        $this->tokenCacheService->set($tokenHash, $jti, $ttl);
 
-        return (string) $sub;
+        return true;
     }
 
     private function decodeJwtPayload(string $token): ?array

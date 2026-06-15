@@ -26,4 +26,15 @@ class ProductController extends Controller
             'message' => 'OK',
         ]);
     }
+
+    public function featured(): JsonResponse
+    {
+        $products = $this->productService->listFeatured();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $products,
+            'message' => 'OK',
+        ]);
+    }
 }

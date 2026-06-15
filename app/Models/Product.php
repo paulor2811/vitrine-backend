@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -12,9 +14,11 @@ class Product extends Model
 
     protected $fillable = [
         'niche_id', 'store_id', 'name', 'description',
-        'image_url', 'price', 'original_price', 'affiliate_url',
+        'image_path', 'price', 'original_price', 'affiliate_url',
         'badge', 'rating', 'rating_count', 'featured', 'active',
     ];
+
+    protected $appends = ['image_url'];
 
     protected function casts(): array
     {
@@ -26,6 +30,14 @@ class Product extends Model
             'featured'       => 'boolean',
             'active'         => 'boolean',
         ];
+    }
+
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->image_path
+            ? Storage::disk('r2')->url($this->image_path)
+            : null
+        );
     }
 
     public function niche(): BelongsTo

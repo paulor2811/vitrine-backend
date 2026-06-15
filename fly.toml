@@ -4,16 +4,19 @@ primary_region = 'gru'
 [build]
 
 [deploy]
-  release_command = 'php artisan migrate --force'
+  release_command = 'php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force && php artisan db:seed --class=NicheSeeder --force && php artisan db:seed --class=StoreSeeder --force'
 
 [env]
-  APP_ENV       = 'production'
-  APP_DEBUG     = 'false'
-  LOG_CHANNEL   = 'stderr'
-  LOG_LEVEL     = 'warning'
-  COOKIE_DOMAIN = '.pauloricardo.dev.br'
-  REDIS_CLIENT  = 'predis'
-  CACHE_STORE   = 'redis'
+  APP_ENV        = 'production'
+  APP_DEBUG      = 'false'
+  LOG_CHANNEL    = 'stderr'
+  LOG_LEVEL      = 'warning'
+  COOKIE_DOMAIN  = '.pauloricardo.dev.br'
+  REDIS_CLIENT   = 'predis'
+  CACHE_STORE    = 'redis'
+  R2_BUCKET      = 'vitrine'
+  R2_PUBLIC_URL  = 'https://media.pauloricardo.dev.br'
+  FILESYSTEM_DISK = 'r2'
 
 [http_service]
   internal_port       = 8080
