@@ -15,7 +15,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name'              => 'Admin',
                 'password'          => Hash::make(config('app.admin_password', 'changeme')),
-                'role'              => 'admin',
+                'is_admin'          => true,
                 'email_verified_at' => now(),
             ]
         );

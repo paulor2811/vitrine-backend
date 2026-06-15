@@ -21,7 +21,7 @@ class User extends Authenticatable implements FilamentUser
         'google_id',
         'avatar_url',
         'email_verified_at',
-        'role',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -34,12 +34,13 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'is_admin'          => 'boolean',
         ];
     }
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return (bool) $this->is_admin;
     }
 
     public function canAccessPanel(Panel $panel): bool
