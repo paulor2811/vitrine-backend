@@ -29,17 +29,20 @@ class ProductResource extends Resource
                     ->label('Nicho')
                     ->options(Niche::where('active', true)->pluck('name', 'id'))
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->native(false),
 
                 Forms\Components\Select::make('store_id')
                     ->label('Loja')
                     ->options(Store::where('active', true)->pluck('name', 'id'))
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->native(false),
 
                 Forms\Components\TextInput::make('name')
                     ->label('Nome do produto')
                     ->required()
+                    ->minLength(3)
                     ->maxLength(255)
                     ->columnSpanFull(),
 
@@ -77,6 +80,7 @@ class ProductResource extends Resource
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(99999999.99)
+                    ->step(0.01)
                     ->prefix('R$'),
 
                 Forms\Components\TextInput::make('original_price')
@@ -84,10 +88,11 @@ class ProductResource extends Resource
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(99999999.99)
+                    ->step(0.01)
                     ->prefix('R$'),
 
                 Forms\Components\TextInput::make('rating')
-                    ->label('Avaliação (0-5)')
+                    ->label('Avaliação (0–5)')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(5)
@@ -96,7 +101,9 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('rating_count')
                     ->label('Nº de avaliações')
                     ->numeric()
-                    ->minValue(0),
+                    ->minValue(0)
+                    ->maxValue(9999999)
+                    ->integer(),
             ])->columns(2),
 
             Forms\Components\Section::make('Destaques')->schema([
@@ -108,7 +115,8 @@ class ProductResource extends Resource
                         'promocao'     => '🏷️ Promoção',
                         'destaque'     => '✨ Destaque',
                     ])
-                    ->nullable(),
+                    ->nullable()
+                    ->native(false),
 
                 Forms\Components\Toggle::make('featured')
                     ->label('Em destaque')
