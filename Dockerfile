@@ -11,9 +11,15 @@ RUN apk add --no-cache \
     unzip \
     libzip-dev \
     oniguruma-dev \
-    postgresql-dev
+    postgresql-dev \
+    icu-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev
 
 # Extensões PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-install \
     pdo_pgsql \
     pgsql \
@@ -21,7 +27,10 @@ RUN docker-php-ext-install \
     pcntl \
     bcmath \
     zip \
-    opcache
+    opcache \
+    intl \
+    gd
+RUN docker-php-ext-enable sodium
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
