@@ -28,7 +28,7 @@ class AuthController extends Controller
             password: $request->password,
         ));
         $tokens = $this->authService->issueTokens($user);
-        [$accessCookie, $refreshCookie] = $this->authService->buildCookies(
+        [$accessCookie, $refreshCookie, $sessionCookie] = $this->authService->buildCookies(
             $tokens['access_token'],
             $tokens['refresh_token'],
         );
@@ -40,7 +40,7 @@ class AuthController extends Controller
                 'expires_in' => $tokens['expires_in'],
             ],
             'message' => 'Conta criada com sucesso.',
-        ], 201)->withCookie($accessCookie)->withCookie($refreshCookie);
+        ], 201)->withCookie($accessCookie)->withCookie($refreshCookie)->withCookie($sessionCookie);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -50,7 +50,7 @@ class AuthController extends Controller
             password: $request->password,
         ));
         $tokens = $this->authService->issueTokens($user);
-        [$accessCookie, $refreshCookie] = $this->authService->buildCookies(
+        [$accessCookie, $refreshCookie, $sessionCookie] = $this->authService->buildCookies(
             $tokens['access_token'],
             $tokens['refresh_token'],
         );
@@ -62,7 +62,7 @@ class AuthController extends Controller
                 'expires_in' => $tokens['expires_in'],
             ],
             'message' => 'Login realizado com sucesso.',
-        ])->withCookie($accessCookie)->withCookie($refreshCookie);
+        ])->withCookie($accessCookie)->withCookie($refreshCookie)->withCookie($sessionCookie);
     }
 
     public function logout(Request $request): JsonResponse
@@ -73,12 +73,12 @@ class AuthController extends Controller
 
         $this->authService->logout($user, $accessToken ?? '');
 
-        [$accessCookie, $refreshCookie] = $this->authService->clearCookies();
+        [$accessCookie, $refreshCookie, $sessionCookie] = $this->authService->clearCookies();
 
         return response()->json([
             'success' => true,
             'message' => 'Logout realizado.',
-        ])->withCookie($accessCookie)->withCookie($refreshCookie);
+        ])->withCookie($accessCookie)->withCookie($refreshCookie)->withCookie($sessionCookie);
     }
 
     public function refresh(Request $request): JsonResponse
@@ -90,7 +90,7 @@ class AuthController extends Controller
         }
 
         $tokens = $this->authService->refresh($refreshTokenValue);
-        [$accessCookie, $refreshCookie] = $this->authService->buildCookies(
+        [$accessCookie, $refreshCookie, $sessionCookie] = $this->authService->buildCookies(
             $tokens['access_token'],
             $tokens['refresh_token'],
         );
@@ -99,7 +99,7 @@ class AuthController extends Controller
             'success' => true,
             'data'    => ['expires_in' => $tokens['expires_in']],
             'message' => 'Token renovado.',
-        ])->withCookie($accessCookie)->withCookie($refreshCookie);
+        ])->withCookie($accessCookie)->withCookie($refreshCookie)->withCookie($sessionCookie);
     }
 
     public function me(Request $request): JsonResponse

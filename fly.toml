@@ -10,7 +10,7 @@ primary_region = 'gru'
   APP_ENV  = 'production'
   APP_DEBUG = 'false'
   LOG_CHANNEL = 'stderr'
-  LOG_LEVEL = 'error'
+  LOG_LEVEL = 'warning'
 
 [http_service]
   internal_port       = 8080
