@@ -7,10 +7,11 @@ primary_region = 'gru'
   release_command = 'php artisan migrate --force'
 
 [env]
-  APP_ENV  = 'production'
-  APP_DEBUG = 'false'
-  LOG_CHANNEL = 'stderr'
-  LOG_LEVEL = 'warning'
+  APP_ENV      = 'production'
+  APP_DEBUG    = 'false'
+  LOG_CHANNEL  = 'stderr'
+  LOG_LEVEL    = 'warning'
+  COOKIE_DOMAIN = '.pauloricardo.dev.br'
 
 [http_service]
   internal_port       = 8080
