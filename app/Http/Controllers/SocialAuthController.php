@@ -16,6 +16,7 @@ class SocialAuthController extends Controller
     public function redirect(): RedirectResponse
     {
         return Socialite::driver('google')
+            ->stateless()
             ->scopes(['openid', 'profile', 'email'])
             ->redirect();
     }
@@ -28,6 +29,6 @@ class SocialAuthController extends Controller
         $frontendUrl = config('app.frontend_url');
         $token       = urlencode($result['token']);
 
-        return redirect("{$frontendUrl}/auth/callback?token={$token}");
+        return redirect("{$frontendUrl}?token={$token}");
     }
 }
