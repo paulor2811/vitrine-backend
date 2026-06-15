@@ -17,6 +17,16 @@ class ProductRepository
             ->get();
     }
 
+    public function findFeatured(int $limit = 20): Collection
+    {
+        return Product::with('store', 'niche')
+            ->where('active', true)
+            ->where('featured', true)
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
+
     public function findById(string $id): ?Product
     {
         return Product::with('store', 'niche')->find($id);

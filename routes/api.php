@@ -22,6 +22,8 @@ Route::prefix('auth')->group(function () {
 });
 
 // Catálogo — público
+Route::get('products/featured', [ProductController::class, 'featured'])->name('products.featured');
+
 Route::prefix('niches')->group(function () {
     Route::get('/',              [NicheController::class,   'index'])->name('niches.index');
     Route::get('{slug}',         [NicheController::class,   'show'])->name('niches.show');
