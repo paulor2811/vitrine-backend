@@ -40,6 +40,7 @@ Route::middleware('auth.cookie')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('logout',        [AuthController::class, 'logout'])->name('auth.logout');
         Route::get('me',             [AuthController::class, 'me'])->name('auth.me');
+        Route::post('password',      [AuthController::class, 'setPassword'])->name('auth.set-password');
         Route::post('claim-session', [AuthController::class, 'claimSession'])->name('auth.claim-session');
     });
 

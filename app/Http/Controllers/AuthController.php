@@ -7,6 +7,7 @@ use App\DTOs\RegisterUserDTO;
 use App\Http\Requests\ClaimSessionRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\SetPasswordRequest;
 use App\Models\User;
 use App\Services\AuthService;
 use App\Services\UserService;
@@ -104,10 +105,43 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
+        /** @var User $user */
+        $user = $request->user();
+
         return response()->json([
             'success' => true,
-            'data'    => $request->user(),
+            'data'    => array_merge($user->toArray(), [
+                'has_password' => ! is_null($user->password),
+            ]),
             'message' => 'OK',
+        ]);
+    }
+
+    public function setPassword(SetPasswordRequest $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        if (! is_null($user->password)) {
+            if (! $request->filled('current_password')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Informe a senha atual.',
+                ], 422);
+            }
+            if (! \Illuminate\Support\Facades\Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Senha atual incorreta.',
+                ], 422);
+            }
+        }
+
+        $user->update(['password' => $request->password]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Senha definida com sucesso.',
         ]);
     }
 
