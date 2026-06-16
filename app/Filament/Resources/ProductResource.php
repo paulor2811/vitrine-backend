@@ -60,17 +60,36 @@ class ProductResource extends Resource
                     ->columnSpanFull(),
             ])->columns(2),
 
-            Forms\Components\Section::make('Imagem')->schema([
-                Forms\Components\FileUpload::make('image_path')
-                    ->label('Imagem do produto')
+            Forms\Components\Section::make('Galeria de imagens')->schema([
+                Forms\Components\FileUpload::make('gallery_images')
+                    ->label('Imagens do produto')
+                    ->helperText('Segure Ctrl (ou ⌘ no Mac) para selecionar várias de uma vez. Arraste para reordenar. Máx. 9 imagens, 5 MB cada.')
+                    ->multiple()
+                    ->reorderable()
                     ->image()
                     ->disk('r2')
                     ->visibility('public')
-                    ->directory('products')
-                    ->imageEditor()
+                    ->directory('product-media')
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxFiles(9)
                     ->maxSize(5120)
-                    ->helperText('JPEG, PNG ou WebP — máx. 5 MB.')
+                    ->columnSpanFull(),
+            ]),
+
+            Forms\Components\Section::make('Vídeos (YouTube / TikTok)')->schema([
+                Forms\Components\Repeater::make('gallery_videos')
+                    ->label('')
+                    ->schema([
+                        Forms\Components\TextInput::make('video_url')
+                            ->label('URL do vídeo')
+                            ->url()
+                            ->required()
+                            ->maxLength(2048)
+                            ->placeholder('https://youtube.com/watch?v=...')
+                            ->columnSpanFull(),
+                    ])
+                    ->maxItems(3)
+                    ->addActionLabel('Adicionar vídeo')
                     ->columnSpanFull(),
             ]),
 
@@ -105,46 +124,6 @@ class ProductResource extends Resource
                     ->maxValue(9999999)
                     ->integer(),
             ])->columns(2),
-
-            Forms\Components\Section::make('Galeria de mídia')->schema([
-                Forms\Components\Repeater::make('media')
-                    ->label('Mídia (até 10 itens — imagens e vídeos)')
-                    ->relationship()
-                    ->schema([
-                        Forms\Components\Select::make('type')
-                            ->label('Tipo')
-                            ->options(['image' => 'Imagem', 'video' => 'Vídeo'])
-                            ->required()
-                            ->default('image')
-                            ->live(),
-
-                        Forms\Components\FileUpload::make('path')
-                            ->label('Imagem')
-                            ->image()
-                            ->disk('r2')
-                            ->directory('product-media')
-                            ->visibility('public')
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->maxSize(5120)
-                            ->helperText('JPEG, PNG ou WebP — máx. 5 MB.')
-                            ->visible(fn (Forms\Get $get) => $get('type') === 'image'),
-
-                        Forms\Components\TextInput::make('video_url')
-                            ->label('URL do vídeo (YouTube ou TikTok)')
-                            ->url()
-                            ->maxLength(2048)
-                            ->placeholder('https://youtube.com/watch?v=...')
-                            ->visible(fn (Forms\Get $get) => $get('type') === 'video'),
-                    ])
-                    ->columns(1)
-                    ->maxItems(10)
-                    ->reorderable()
-                    ->reorderableWithDragAndDrop()
-                    ->orderColumn('sort_order')
-                    ->collapsible()
-                    ->addActionLabel('Adicionar mídia')
-                    ->columnSpanFull(),
-            ]),
 
             Forms\Components\Section::make('Destaques')->schema([
                 Forms\Components\Select::make('badge')
