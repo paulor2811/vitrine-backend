@@ -96,19 +96,19 @@ class ProductResource extends Resource
             Forms\Components\Section::make('Preço e avaliação')->schema([
                 Forms\Components\TextInput::make('price')
                     ->label('Preço atual (R$)')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(99999999.99)
-                    ->step(0.01)
-                    ->prefix('R$'),
+                    ->prefix('R$')
+                    ->inputMode('decimal')
+                    ->extraInputAttributes(['x-mask:dynamic' => '$money($input, \',\', \'.\', 2)'])
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 2, ',', '.') : null)
+                    ->dehydrateStateUsing(fn ($state) => $state !== null && $state !== '' ? (float) str_replace(['.', ','], ['', '.'], $state) : null),
 
                 Forms\Components\TextInput::make('original_price')
                     ->label('Preço original (R$)')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(99999999.99)
-                    ->step(0.01)
-                    ->prefix('R$'),
+                    ->prefix('R$')
+                    ->inputMode('decimal')
+                    ->extraInputAttributes(['x-mask:dynamic' => '$money($input, \',\', \'.\', 2)'])
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 2, ',', '.') : null)
+                    ->dehydrateStateUsing(fn ($state) => $state !== null && $state !== '' ? (float) str_replace(['.', ','], ['', '.'], $state) : null),
 
                 Forms\Components\TextInput::make('rating')
                     ->label('Avaliação (0–5)')
