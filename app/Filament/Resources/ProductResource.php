@@ -64,6 +64,7 @@ class ProductResource extends Resource
                 Forms\Components\FileUpload::make('gallery_images')
                     ->label('Imagens do produto')
                     ->helperText('Segure Ctrl (ou ⌘ no Mac) para selecionar várias de uma vez. Arraste para reordenar. Máx. 9 imagens, 5 MB cada.')
+                    ->required()
                     ->multiple()
                     ->reorderable()
                     ->image()
