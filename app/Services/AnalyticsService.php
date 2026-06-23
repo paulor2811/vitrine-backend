@@ -28,6 +28,23 @@ class AnalyticsService
             'user_agent'   => $dto->userAgent,
             'metadata'     => $dto->metadata,
         ]);
+
+        if (config('services.meta.pixel_id') && config('services.meta.access_token')) {
+            \App\Jobs\SendMetaConversionEventJob::dispatch([
+                'event_type'       => $dto->eventType,
+                'session_id'       => $dto->sessionId,
+                'user_id'          => $dto->userId,
+                'niche_id'         => $dto->nicheId,
+                'product_id'       => $dto->productId,
+                'store_id'         => $dto->storeId,
+                'event_id'         => $dto->eventId,
+                'event_source_url' => $dto->eventSourceUrl,
+                'client_ip'        => $dto->clientIp,
+                'user_agent'       => $dto->userAgent,
+                'fbp'              => $dto->fbp,
+                'fbc'              => $dto->fbc,
+            ]);
+        }
     }
 
     public function claimSession(string $sessionId, string $userId): void
