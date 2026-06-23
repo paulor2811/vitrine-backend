@@ -40,7 +40,9 @@ class NicheResource extends Resource
                     ->validationMessages([
                         'regex' => 'O slug deve conter apenas letras minúsculas, números e hífens (ex: vestuario). Sem acentos ou espaços.',
                     ])
-                    ->maxLength(100),
+                    ->maxLength(100)
+                    ->formatStateUsing(fn ($state) => trim((string) $state))
+                    ->dehydrateStateUsing(fn ($state) => trim((string) $state)),
 
                 Forms\Components\TextInput::make('icon')
                     ->label('Ícone (emoji)')
