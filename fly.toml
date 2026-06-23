@@ -31,7 +31,7 @@ primary_region = 'gru'
     hard_limit = 250
 
 [[vm]]
-  memory   = '256mb'
+  memory   = '512mb'
   cpu_kind = 'shared'
   cpus     = 1
 
