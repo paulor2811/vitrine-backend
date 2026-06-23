@@ -15,6 +15,11 @@ class Niche extends Model
     protected $fillable = [
         'slug', 'name', 'description', 'icon',
         'image_path', 'bg_color', 'instagram_url', 'tiktok_url', 'active',
+        'meta_pixel_id', 'meta_access_token',
+    ];
+
+    protected $hidden = [
+        'meta_access_token',
     ];
 
     protected $appends = ['image_url'];

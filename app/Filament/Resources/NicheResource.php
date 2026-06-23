@@ -73,6 +73,19 @@ class NicheResource extends Resource
                     ->label('Ativo')
                     ->default(true),
             ])->columns(2),
+
+            Forms\Components\Section::make('Integração Meta (Opcional)')
+                ->description('Configuração dinâmica de Pixel e API de Conversões específicos para este nicho. Se deixado em branco, usará as chaves globais do .env.')
+                ->schema([
+                    Forms\Components\TextInput::make('meta_pixel_id')
+                        ->label('Meta Pixel ID')
+                        ->maxLength(50),
+                    Forms\Components\TextInput::make('meta_access_token')
+                        ->label('Meta Access Token')
+                        ->password()
+                        ->revealable()
+                        ->maxLength(1000),
+                ])->columns(2),
         ]);
     }
 
