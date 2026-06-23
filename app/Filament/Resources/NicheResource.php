@@ -36,6 +36,10 @@ class NicheResource extends Resource
                     ->label('Slug')
                     ->required()
                     ->unique(ignoreRecord: true)
+                    ->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')
+                    ->validationMessages([
+                        'regex' => 'O slug deve conter apenas letras minúsculas, números e hífens (ex: vestuario). Sem acentos ou espaços.',
+                    ])
                     ->maxLength(100),
 
                 Forms\Components\TextInput::make('icon')
