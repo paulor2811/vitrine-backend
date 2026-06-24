@@ -58,7 +58,8 @@ class ClicksByNicheWidget extends BaseWidget
             ])
             ->actions([
                 Tables\Actions\Action::make('ver_nicho')
-                    ->label('Abrir')
+                    ->label('')
+                    ->tooltip('Abrir nicho')
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->color('gray')
                     ->url(fn ($record) => $frontendUrl . '/' . $record->slug, true),

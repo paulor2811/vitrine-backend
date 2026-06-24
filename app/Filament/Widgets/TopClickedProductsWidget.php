@@ -44,7 +44,8 @@ class TopClickedProductsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('name')
                     ->label('Produto')
                     ->searchable()
-                    ->wrap()
+                    ->limit(40)
+                    ->description(fn ($record) => $record->store?->name)
                     ->url(fn ($record) => ProductResource::getUrl('edit', ['record' => $record->id]))
                     ->color('primary'),
 
@@ -55,27 +56,16 @@ class TopClickedProductsWidget extends BaseWidget
                     ->color('gray')
                     ->url(fn ($record) => $record->niche?->slug ? $frontendUrl . '/' . $record->niche->slug : null),
 
-                Tables\Columns\TextColumn::make('store.name')
-                    ->label('Loja')
-                    ->badge()
-                    ->color('warning'),
-
                 Tables\Columns\TextColumn::make('clicks_count')
                     ->label('Cliques')
                     ->badge()
                     ->color('success')
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('affiliate_url')
-                    ->label('Link afiliado')
-                    ->limit(30)
-                    ->url(fn ($record) => $record->affiliate_url, true)
-                    ->color('gray')
-                    ->icon('heroicon-m-arrow-top-right-on-square'),
             ])
             ->actions([
                 Tables\Actions\Action::make('ver_vitrine')
-                    ->label('Vitrine')
+                    ->label('')
+                    ->tooltip('Ver na Vitrine')
                     ->icon('heroicon-m-eye')
                     ->color('gray')
                     ->url(fn ($record) => $record->niche?->slug
@@ -83,7 +73,8 @@ class TopClickedProductsWidget extends BaseWidget
                         : $frontendUrl, true),
 
                 Tables\Actions\Action::make('ver_oferta')
-                    ->label('Oferta')
+                    ->label('')
+                    ->tooltip('Ver oferta')
                     ->icon('heroicon-m-shopping-cart')
                     ->color('success')
                     ->url(fn ($record) => $record->affiliate_url, true),
