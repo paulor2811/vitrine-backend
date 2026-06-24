@@ -85,12 +85,16 @@ class NicheResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('meta_pixel_id')
                         ->label('Meta Pixel ID')
-                        ->maxLength(50),
+                        ->maxLength(50)
+                        ->autocomplete('off')
+                        ->extraInputAttributes(['autocomplete' => 'off']),
                     Forms\Components\TextInput::make('meta_access_token')
                         ->label('Meta Access Token')
                         ->password()
                         ->revealable()
-                        ->maxLength(1000),
+                        ->maxLength(1000)
+                        ->autocomplete('new-password')
+                        ->extraInputAttributes(['autocomplete' => 'new-password']),
                 ])->columns(2),
         ]);
     }
