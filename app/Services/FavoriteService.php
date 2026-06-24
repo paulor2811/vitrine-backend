@@ -15,7 +15,7 @@ class FavoriteService
 
     public function list(string $userId): Collection
     {
-        return $this->favoriteRepository->allForUser($userId);
+        return $this->favoriteRepository->allForUser($userId)->map(fn ($fav) => $fav->product);
     }
 
     public function add(FavoriteDTO $dto): void
