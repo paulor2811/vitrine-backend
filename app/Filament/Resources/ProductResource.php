@@ -126,7 +126,7 @@ class ProductResource extends Resource
                     ->integer(),
             ])->columns(2),
 
-            Forms\Components\Section::make('Destaques')->schema([
+            Forms\Components\Section::make('Destaques e promoção')->schema([
                 Forms\Components\Select::make('badge')
                     ->label('Badge')
                     ->options([
@@ -145,6 +145,13 @@ class ProductResource extends Resource
                 Forms\Components\Toggle::make('active')
                     ->label('Ativo')
                     ->default(true),
+
+                Forms\Components\DateTimePicker::make('promotion_ends_at')
+                    ->label('Oferta expira em')
+                    ->helperText('Exibe countdown no site. Deixe vazio para sem prazo.')
+                    ->nullable()
+                    ->native(false)
+                    ->columnSpanFull(),
             ])->columns(3),
         ]);
     }
