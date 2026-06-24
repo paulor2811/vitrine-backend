@@ -11,23 +11,29 @@ class AnalyticsService
         private readonly AnalyticsRepository $analyticsRepository,
     ) {}
 
+    // Eventos que valem ser persistidos internamente.
+    // page_view não tem contexto (sem nicho/produto) e só serve para o Meta CAPI.
+    private const PERSISTED_EVENTS = ['niche_view', 'product_view', 'product_click'];
+
     public function record(EventDTO $dto): void
     {
-        $this->analyticsRepository->record([
-            'session_id'   => $dto->sessionId,
-            'user_id'      => $dto->userId,
-            'event_type'   => $dto->eventType,
-            'niche_id'     => $dto->nicheId,
-            'product_id'   => $dto->productId,
-            'store_id'     => $dto->storeId,
-            'utm_source'   => $dto->utmSource,
-            'utm_medium'   => $dto->utmMedium,
-            'utm_campaign' => $dto->utmCampaign,
-            'utm_content'  => $dto->utmContent,
-            'referrer'     => $dto->referrer,
-            'user_agent'   => $dto->userAgent,
-            'metadata'     => $dto->metadata,
-        ]);
+        if (in_array($dto->eventType, self::PERSISTED_EVENTS, strict: true)) {
+            $this->analyticsRepository->record([
+                'session_id'   => $dto->sessionId,
+                'user_id'      => $dto->userId,
+                'event_type'   => $dto->eventType,
+                'niche_id'     => $dto->nicheId,
+                'product_id'   => $dto->productId,
+                'store_id'     => $dto->storeId,
+                'utm_source'   => $dto->utmSource,
+                'utm_medium'   => $dto->utmMedium,
+                'utm_campaign' => $dto->utmCampaign,
+                'utm_content'  => $dto->utmContent,
+                'referrer'     => $dto->referrer,
+                'user_agent'   => $dto->userAgent,
+                'metadata'     => $dto->metadata,
+            ]);
+        }
 
         if (config('services.meta.pixel_id') && config('services.meta.access_token')) {
             \App\Jobs\SendMetaConversionEventJob::dispatch([
