@@ -20,6 +20,7 @@ class ClicksBySourceWidget extends BaseWidget
         return $table
             ->query(fn (): Builder => AnalyticsEvent::query()
                 ->select([
+                    DB::raw('MIN(id) as id'),
                     DB::raw("COALESCE(utm_source, 'direto') as utm_source"),
                     DB::raw('COUNT(*) as clicks_count'),
                 ])
