@@ -67,7 +67,7 @@ class AnalyticsRepository
             ->groupBy('products.id', 'products.name', 'products.niche_id')
             ->orderByDesc('clicks_count')
             ->limit($limit)
-            ->with('niche:id,name,icon', 'store:id,name')
+            ->with('niche:id,name,icon,slug', 'store:id,name')
             ->get();
     }
 
