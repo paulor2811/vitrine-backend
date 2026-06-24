@@ -51,4 +51,23 @@ class AnalyticsService
     {
         $this->analyticsRepository->claimSession($sessionId, $userId);
     }
+
+    // Registra redirecionamento server-side sem disparar Meta CAPI,
+    // pois o evento browser-side (product_click) já cuida disso.
+    public function recordRedirect(string $productId, ?string $nicheId, ?string $storeId, \Illuminate\Http\Request $request): void
+    {
+        $this->analyticsRepository->record([
+            'session_id'   => \Illuminate\Support\Str::uuid()->toString(),
+            'event_type'   => 'product_redirect',
+            'product_id'   => $productId,
+            'niche_id'     => $nicheId,
+            'store_id'     => $storeId,
+            'utm_source'   => $request->query('utm_source'),
+            'utm_medium'   => $request->query('utm_medium'),
+            'utm_campaign' => $request->query('utm_campaign'),
+            'utm_content'  => $request->query('utm_content'),
+            'referrer'     => $request->header('Referer'),
+            'user_agent'   => $request->userAgent(),
+        ]);
+    }
 }

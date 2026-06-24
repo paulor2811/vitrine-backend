@@ -39,4 +39,12 @@ class ProductRepository
     {
         return Product::with('store', 'niche', 'media')->find($id);
     }
+
+    public function allActiveForSitemap(): Collection
+    {
+        return Product::with('niche:id,slug')
+            ->where('active', true)
+            ->select('id', 'niche_id', 'updated_at')
+            ->get();
+    }
 }
