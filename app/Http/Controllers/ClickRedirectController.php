@@ -17,11 +17,14 @@ class ClickRedirectController extends Controller
 
     private function shouldRecord(Request $request, string $productId): bool
     {
-        if (auth()->check() && auth()->user()->is_admin) {
+        $user = auth()->user();
+
+        if ($user?->is_admin) {
             return false;
         }
 
-        $key = 'redirect_dedup:' . $request->ip() . ':' . $productId;
+        $identifier = $user ? 'user:' . $user->id : 'ip:' . $request->ip();
+        $key = 'redirect_dedup:' . $identifier . ':' . $productId;
 
         return Cache::add($key, 1, now()->addHours(24));
     }
