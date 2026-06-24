@@ -46,12 +46,10 @@ class SendMetaConversionEventJob implements ShouldQueue
             }
         }
 
-        // Resolvendo credenciais dinâmicas do nicho ou aplicando o fallback global
-        $pixelId = !empty($niche?->meta_pixel_id) ? $niche->meta_pixel_id : config('services.meta.pixel_id');
-        $accessToken = !empty($niche?->meta_access_token) ? $niche->meta_access_token : config('services.meta.access_token');
+        $pixelId     = $niche?->meta_pixel_id;
+        $accessToken = $niche?->meta_access_token;
 
         if (empty($pixelId) || empty($accessToken)) {
-            Log::debug('Meta CAPI: Integração não configurada (chaves ausentes).');
             return;
         }
 
