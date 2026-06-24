@@ -8,8 +8,6 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ClicksBySourceWidget extends BaseWidget
 {
-    protected static ?string $heading = '🌐 Cliques por Fonte (30 dias)';
-
     protected static ?int $sort = 4;
 
     protected static ?string $pollingInterval = null;
